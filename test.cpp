@@ -3,13 +3,24 @@
 
 using namespace std;
 
+using Tf = Orion::Tensor<float>;
+
 int main() {
-    Orion::Tensor<float> t({3,3,3,3,4});
-    t.randomize(-10, 10);
+    Tf t({200,300,400});
+    t.randomize(0, 1);
+    
+    // cout << t  << endl;
 
-    cout << t << "\n";
+    Tf t1 = t(0, 0);
+    for(int i = 1; i < 300; i++)
+        t1 = t1 + t(0, i)*t(0, i-1);
 
-    cout << "\n";
+    // cout << t1 << endl;
 
+    Tf t2 = t(0);
+    for(int i = 1; i < 200; i++)
+        t2 = t2 + t(i)*t(i-1);
+
+    // cout << t2 << endl;
     return 0;
 }

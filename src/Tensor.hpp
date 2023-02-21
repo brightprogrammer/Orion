@@ -6,16 +6,32 @@
 #include <cstdlib>
 #include <ctime>
 
+#include <type_traits>
+
 #include "Typedefs.hpp"
 
 namespace Orion{
+
+    template<typename E>
+    class TensorBase{
+        public:
+        inline double operator[](size_t i) const{
+			return static_cast<E const&>(*this)[i];
+		}
+		inline const DimVec& dim() const{
+			return static_cast<E const&>(*this).dim();
+		}
+		inline size_t rank() const{
+			return static_cast<E const&>(*this).rank();
+        }
+    };
 
     /**
      * Tensor is a general linear algebra object in Orion.
      * dt = int, float, double etc...
      * */
     template <typename dt>
-    class Tensor {
+    class Tensor : public TensorBase<Tensor<dt>>{
     public:
         Tensor() = default;
 
@@ -33,6 +49,20 @@ namespace Orion{
          * class doesn't make a copy of this data anywhere.
          * */
         Tensor(const DimVec& dim, dt* data);
+
+        template<typename E>
+        Tensor(const TensorBase<E>& expr) : m_dim(expr.dim()){
+            m_nelem = 1;
+            for(u64 i = 0; i < rank(); i++){
+                m_nelem *= m_dim[i];
+            }
+
+            m_data = reinterpret_cast<dt*>(malloc(sizeof(dt) * m_nelem));
+            
+            for(int i = 0; i < m_nelem; i++){
+                m_data[i] = expr[i];
+        }
+    }
 
         /**
          * Fill all elements with zero. This will basically memset the whole data array.
@@ -89,6 +119,9 @@ namespace Orion{
          * */
         inline dt value() { if(rank() != 0) std::cerr << "WARN : getting value for non scalar tensor!\n"; return m_scalar; }
 
+        inline dt operator[](size_t index) const{
+            return m_data[index];
+        }
         /**
          * Tensor operator to get scalar or subtensor
          * */
@@ -130,9 +163,17 @@ namespace Orion{
         template <typename _dt>
         inline friend std::iostream& operator >> (std::iostream& in, Tensor<_dt>& m);
 
-        inline Tensor<dt> operator + (const Tensor<dt>& m);
-        inline Tensor<dt> operator - (const Tensor<dt>& m);
-        inline Tensor<dt> operator * (const Tensor<dt>& m);
+        // inline Tensor<dt> operator + (const Tensor<dt>& m);
+
+        // inline Tensor<dt> operator + (dt m);
+
+        // inline Tensor<dt> operator - (const Tensor<dt>& m);
+        
+        // inline Tensor<dt> operator - (dt m);
+        
+        // inline Tensor<dt> operator * (const Tensor<dt>& m);
+
+        // inline Tensor<dt> operator * (dt m);
     private:
         union {
             dt* m_data; // we store data of tensor as linear array
@@ -149,5 +190,7 @@ namespace Orion{
 } // namespace orion
 
 #include "TensorImpl.hpp"
+#include "expressions.hpp"
+#include "operators.hpp"
 
 #endif // TENSOR_H_

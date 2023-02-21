@@ -4,3 +4,10 @@
 tmp/
 
 build/
+.vscode
+massif.*
+out.txt
+*.data
+test
+.gitignore
+*data.old
