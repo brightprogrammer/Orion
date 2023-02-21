@@ -13,13 +13,13 @@ int main() {
 
     Tf t1 = t(0, 0);
     for(int i = 1; i < 300; i++)
-        t1 = t1 + t(0, i)*t(0, i-1);
+        t1 = t1 + t(0, i)%t(0, i-1);
 
     // cout << t1 << endl;
 
     Tf t2 = t(0);
     for(int i = 1; i < 200; i++)
-        t2 = t2 + t(i)*t(i-1);
+        t2 = t2 + t(i)%t(i-1);
 
     // cout << t2 << endl;
     return 0;

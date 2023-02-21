@@ -27,19 +27,6 @@ namespace Orion{
         }
     }
 
-    // template <typename dt, typename E>
-    // Tensor<dt>::Tensor(const TensorBase<E>& expr) : m_dim(expr.dim()){
-    //     m_nelem = 1;
-    //     for(u64 i = 0; i < rank(); i++){
-    //         m_nelem *= m_dim[i];
-    //     }
-
-    //     m_data = reinterpret_cast<dt*>(malloc(sizeof(dt) * m_nelem));
-
-    //     for(int i = 0; i < m_nelem; i++){
-    //         m_data[i] = expr[i];
-    //     }
-    // }
 
     template <typename dt>
     inline void Tensor<dt>::zeroes(){
@@ -57,8 +44,10 @@ namespace Orion{
     inline void Tensor<dt>::randomize(dt min, dt max){
         srand(static_cast<u32>(time(nullptr)));
         for(u64 i = 0; i < m_nelem; i++){
-            if(max != 0) m_data[i] = min + (static_cast<dt>(rand()) - static_cast<float>(RAND_MAX)/2)*max/static_cast<dt>(RAND_MAX);
-            else m_data[i] = min + static_cast<dt>(rand()%RAND_MAX);
+            // if(max != 0) m_data[i] = min + (static_cast<dt>(rand()) - static_cast<float>(RAND_MAX)/2)*max/static_cast<dt>(RAND_MAX);
+            // else m_data[i] = min + static_cast<dt>(rand()%RAND_MAX);
+
+            m_data[i] = (static_cast<dt>(rand())/RAND_MAX)*(max-min) + min;
         }
     }
 
@@ -121,90 +110,6 @@ namespace Orion{
 
         return in;
     }
-
-    // template <typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator + (const Tensor<dt>& other){
-    //     for(u64 i = 0; i < other.rank(); i++){
-    //         assert(other.m_dim[i] == m_dim[i] && "TENSOR DIMENSIONS MUST BE EXACTLY SAME!");
-    //     }
-
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-    //     dt* other_m_data = other.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] + other_m_data[i];
-    //     }
-
-    //     return res;
-    // }
-
-    // template<typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator + (dt m){
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] + m;
-    //     }
-    //     return res;
-    // }
-
-    // template <typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator - (const Tensor<dt>& other){
-    //     for(u64 i = 0; i < other.rank(); i++){
-    //         assert(other.m_dim[i] == m_dim[i] && "TENSOR DIMENSIONS MUST BE EXACTLY SAME!");
-    //     }
-
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-    //     dt* other_m_data = other.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] - other_m_data[i];
-    //     }
-
-    //     return res;
-    // }
-
-    // template<typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator - (dt m){
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] - m;
-    //     }
-    //     return res;
-    // }
-
-    // template <typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator * (const Tensor<dt>& other){
-    //     for(u64 i = 0; i < other.rank(); i++){
-    //         assert(other.m_dim[i] == m_dim[i] && "TENSOR DIMENSIONS MUST BE EXACTLY SAME!");
-    //     }
-
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-    //     dt* other_m_data = other.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] * other_m_data[i];
-    //     }
-
-    //     return res;
-    // }
-
-    // template<typename dt>
-    // inline Tensor<dt> Tensor<dt>::operator * (dt m){
-    //     Tensor<dt> res(m_dim);
-    //     dt* res_m_data = res.m_data;
-
-    //     for(u64 i = 0; i < m_nelem; i++){
-    //         res_m_data[i] = m_data[i] * m;
-    //     }
-    //     return res;
-    // }
 }
 
 #endif // TENSORIMPL_H_

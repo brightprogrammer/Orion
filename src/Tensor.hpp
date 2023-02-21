@@ -15,6 +15,8 @@ namespace Orion{
     template<typename E>
     class TensorBase{
         public:
+        // typedef E::value_type value_type;
+        
         inline double operator[](size_t i) const{
 			return static_cast<E const&>(*this)[i];
 		}
@@ -33,6 +35,9 @@ namespace Orion{
     template <typename dt>
     class Tensor : public TensorBase<Tensor<dt>>{
     public:
+        typedef dt value_type;
+
+
         Tensor() = default;
 
         /**
