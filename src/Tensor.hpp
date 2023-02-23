@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <cassert>
 
 #include <type_traits>
 
@@ -12,8 +13,11 @@
 
 namespace Orion{
 
+    class TensorPtr{
+    };
+
     template<typename E>
-    class TensorBase{
+    class TensorBase : public TensorPtr {
         public:
         // typedef E::value_type value_type;
         
@@ -64,10 +68,70 @@ namespace Orion{
 
             m_data = reinterpret_cast<dt*>(malloc(sizeof(dt) * m_nelem));
             
-            for(int i = 0; i < m_nelem; i++){
+            for(u64 i = 0; i < m_nelem; i++){
                 m_data[i] = expr[i];
+           }
         }
-    }
+
+        template<typename E>
+        Tensor& operator+=(const TensorBase<E>& other){
+            assert(rank() == other.rank());
+            auto s1 = m_dim;
+            auto s2 = other.dim();
+                for(u64 i = 0; i < s1.size(); i++)
+                    assert(s1[i] == s2[i]);
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] += other[i];
+            }
+            return *this;
+        }
+        template<typename E>
+        Tensor& operator-=(const TensorBase<E>& other){
+            assert(rank() == other.rank());
+            auto s1 = m_dim;
+            auto s2 = other.dim();
+            for(u64 i = 0; i < s1.size(); i++)
+                assert(s1[i] == s2[i]);
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] -= other[i];
+            }
+            return *this;
+        }
+
+        template<typename E>
+        Tensor& operator%=(const TensorBase<E>& other){
+            assert(rank() == other.rank());
+            auto s1 = m_dim;
+            auto s2 = other.dim();
+            for(u64 i = 0; i < s1.size(); i++)
+                assert(s1[i] == s2[i]);
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] *= other[i];
+            }
+            return *this;
+        }
+
+        template<typename Scalar, std::enable_if_t<std::is_scalar<Scalar>::value, bool> = true>
+        Tensor& operator+=(Scalar other){
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] += other;
+            }
+            return *this;
+        }
+        template<typename Scalar, std::enable_if_t<std::is_scalar<Scalar>::value, bool> = true>
+        Tensor& operator-=(Scalar other){
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] += other;
+            }
+            return *this;
+        }
+        template<typename Scalar, std::enable_if_t<std::is_scalar<Scalar>::value, bool> = true>
+        Tensor& operator%=(Scalar other){
+            for(u64 i = 0; i < m_nelem; i++){
+                m_data[i] *= other;
+            }
+            return *this;
+        }
 
         /**
          * Fill all elements with zero. This will basically memset the whole data array.
@@ -168,6 +232,9 @@ namespace Orion{
         template <typename _dt>
         inline friend std::iostream& operator >> (std::iostream& in, Tensor<_dt>& m);
 
+        //Transpose
+        inline auto t();
+
         // inline Tensor<dt> operator + (const Tensor<dt>& m);
 
         // inline Tensor<dt> operator + (dt m);
@@ -195,7 +262,7 @@ namespace Orion{
 } // namespace orion
 
 #include "TensorImpl.hpp"
-#include "expressions.hpp"
-#include "operators.hpp"
+#include "Expressions.hpp"
+#include "Operators.hpp"
 
 #endif // TENSOR_H_

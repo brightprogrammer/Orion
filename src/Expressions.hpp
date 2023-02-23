@@ -21,7 +21,7 @@ namespace Orion
                 assert(u.rank() == v.rank());
                 auto s1 = u.dim();
                 auto s2 = v.dim();
-                for(int i = 0; i < s1.size(); i++)
+                for(size_t i = 0; i < s1.size(); i++)
                     assert(s1[i] == s2[i]);
             }
             inline auto operator[](size_t i) const {

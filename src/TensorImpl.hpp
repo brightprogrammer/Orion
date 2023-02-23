@@ -35,15 +35,20 @@ namespace Orion{
 
     template <typename dt>
     inline void Tensor<dt>::fill(dt x){
-        for(int i = 0; i < m_nelem; i++){
+        for(u64 i = 0; i < m_nelem; i++){
             m_data[i] = x;
         }
     }
 
+    bool given_seed = false;
     template <typename dt>
     inline void Tensor<dt>::randomize(dt min, dt max){
-        srand(static_cast<u32>(time(nullptr)));
+        if(!given_seed){
+            srand(static_cast<u32>(time(nullptr)));
+            given_seed = true;
+        }
         for(u64 i = 0; i < m_nelem; i++){
+            //Error: The elements are not in the range (min, max)
             // if(max != 0) m_data[i] = min + (static_cast<dt>(rand()) - static_cast<float>(RAND_MAX)/2)*max/static_cast<dt>(RAND_MAX);
             // else m_data[i] = min + static_cast<dt>(rand()%RAND_MAX);
 
@@ -110,6 +115,22 @@ namespace Orion{
 
         return in;
     }
+
+    template<typename dt>
+    inline auto Tensor<dt>::t(){
+        assert(rank() == 2);
+        auto& shape = m_dim;
+        size_t n = shape[0];
+        size_t m = shape[1];
+        Tensor<dt> transpose({m , n});
+        auto d = transpose.data();
+        for(u64 i = 0; i < n; i++){
+            for(u64 j = 0; j < m; j++)
+               d[j*n + i]  = m_data[i*m + j];
+        }
+
+        return transpose;
+    }    
 }
 
 #endif // TENSORIMPL_H_

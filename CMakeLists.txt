@@ -8,8 +8,10 @@ endif()
 # project settings
 project(ORION LANGUAGES CXX)
 set(CMAKE_CXX_VERSION 17)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wpedantic \
--Wconversion -Wcast-align -Wunused -Wshadow -Wold-style-cast \
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -Wall -Wextra -Werror -Wpedantic \
+-Wconversion -Wcast-align -Wunused -Wshadow  -Wold-style-cast \
 -Wpointer-arith -Wcast-qual -Wno-missing-braces")
 
 add_executable(test test.cpp)
+add_executable(test2 test2.cpp)
+add_executable(test3 test3.cpp)
